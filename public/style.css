@@ -1,0 +1,9 @@
+* {
+  background-color: rgb(167, 167, 167);
+}
+.outgoing__message {
+  float: left;
+}
+.incoming__message {
+  float: right;
+}
