@@ -1,9 +1,11 @@
-* {
-  background-color: rgb(167, 167, 167);
-}
+/* {
+/* background-color: rgb(167, 167, 167);
+} */
+
 .outgoing__message {
-  float: left;
+  background-color: #484853;
 }
 .incoming__message {
-  float: right;
+  /* float: right;  */
+  background-color: #05b1b1;
 }

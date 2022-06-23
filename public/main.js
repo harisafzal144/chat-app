@@ -9,7 +9,8 @@ const fallback = document.querySelector('.fallback');
 let userName = '';
 //new user from client side
 const newUserConnected = (user) => {
-  userName = user || `User${Math.floor(Math.random() * 1000000)}`;
+  let new_user = prompt('Enter Name');
+  userName = new_user || `User${Math.floor(Math.random() * 1000000)}`;
   //discharge from client to node server
   socket.emit('new user', userName);
   addToUsersBox(userName);
@@ -30,10 +31,7 @@ const addToUsersBox = (userName) => {
 
 const addNewMessage = ({ user, message }) => {
   const time = new Date();
-  const formattedTime = time.toLocaleString('en-US', {
-    hour: 'numeric',
-    minute: 'numeric',
-  });
+  const formattedTime = time.toLocaleString('en-US');
 
   const receivedMsg = `
     <div class="incoming__message">
@@ -65,6 +63,7 @@ newUserConnected();
 messageForm.addEventListener('submit', (e) => {
   e.preventDefault();
   if (!inputField.value) {
+    console.log('input is empty');
     return;
   }
 
@@ -74,6 +73,10 @@ messageForm.addEventListener('submit', (e) => {
   });
 
   inputField.value = '';
+  socket.emit('typing', {
+    isTyping: false,
+    nick: userName,
+  });
 });
 
 inputField.addEventListener('keyup', () => {
@@ -88,6 +91,8 @@ socket.on('new user', function (data) {
 });
 
 socket.on('user disconnected', function (userName) {
+  console.log(` Left chat`, 'user disconnected');
+  addNewMessage({ user: userName, message: `${userName} Left chat` });
   document.querySelector(`.${userName}-userlist`).remove();
 });
 
@@ -96,12 +101,13 @@ socket.on('chat message', function (data) {
 });
 
 socket.on('typing', function (data) {
+  console.log(data, 'inside typing');
   const { isTyping, nick } = data;
 
   if (!isTyping) {
     fallback.innerHTML = '';
     return;
+  } else {
+    fallback.innerHTML = `<p>${nick} is typing...</p>`;
   }
-
-  fallback.innerHTML = `<p>${nick} is typing...</p>`;
 });
